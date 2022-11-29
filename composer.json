@@ -1,0 +1,18 @@
+{
+    "name": "pyncer/core",
+    "type": "library",
+    "description": "Core functions used by the Pyncer library.",
+    "homepage": "https://pyncer.com/core",
+    "license": "Unlicense",
+    "require": {
+        "php": ">=8.1",
+        "ext-mbstring": "*"
+    },
+    "autoload": {
+        "files": ["src/autoload.php"]
+    },
+    "support": {
+        "issues": "https://github.com/pyncerrc/pyncer-core/issues",
+        "source": "https://github.com/pyncerrc/pyncer-core"
+    }
+}
