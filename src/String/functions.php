@@ -34,6 +34,8 @@ use function strrpos;
 use function strval;
 use function substr;
 
+use const Pyncer\ENCODING as PYNCER_ENCODING;
+
 function nullify(?string $value, mixed $default = null): mixed
 {
     if ($value === '' || $value === null) {
@@ -398,61 +400,61 @@ function sub_replace(string $s, string $replace, int $offset, ?int $length = nul
 }
 function convert_kana(string $s, string $mode = 'KV'): string
 {
-    return mb_convert_kana($s, $option);
+    return mb_convert_kana($s, $mode, PYNCER_ENCODING);
 }
 function split(string $s, int $length = 1): array
 {
-    return mb_str_split($s, $option);
+    return mb_str_split($s, $option, PYNCER_ENCODING);
 }
-function ipos(string $haystack, string $needle, ?int $offset = null): int
+function ipos(string $haystack, string $needle, ?int $offset = null): int|false
 {
-    return mb_stripos($haystack, $needle, $offset);
+    return mb_stripos($haystack, $needle, $offset, PYNCER_ENCODING);
 }
 function istr(string $haystack, string $needle, bool $beforeNeedle = false): string|false
 {
-    return mb_stristr($haystack, $needle, $beforeNeedle);
+    return mb_stristr($haystack, $needle, $beforeNeedle, PYNCER_ENCODING);
 }
 function len(string $s): int
 {
-    return mb_strlen($s);
+    return mb_strlen($s, PYNCER_ENCODING);
 }
 function pos(string $haystack, string $needle, int $offset = 0): int|false
 {
-    return mb_strpos($haystack, $needle, $offset);
+    return mb_strpos($haystack, $needle, $offset, PYNCER_ENCODING);
 }
 function rchr(string $haystack, string $needle, bool $beforeNeedle = null): string|false
 {
-    return mb_strrchr($haystack, $needle, $beforeNeedle);
+    return mb_strrchr($haystack, $needle, $beforeNeedle, PYNCER_ENCODING);
 }
 function richr(string $haystack, string $needle, bool $beforeNeedle = null): string|false
 {
-    return mb_strrichr($haystack, $needle, $beforeNeedle);
+    return mb_strrichr($haystack, $needle, $beforeNeedle, PYNCER_ENCODING);
 }
 function ripos(string $haystack, string $needle, int $offset = 0): int|false
 {
-    return mb_strripos($haystack, $needle, $offset);
+    return mb_strripos($haystack, $needle, $offset, PYNCER_ENCODING);
 }
 function rpos(string $haystack, string $needle, int $offset = 0): int|false
 {
-    return mb_strrpos($haystack, $needle, $offset);
+    return mb_strrpos($haystack, $needle, $offset, PYNCER_ENCODING);
 }
 function str(string $haystack, string $needle, bool $beforeNeedle = false): string|false
 {
-    return mb_strstr($haystack, $needle, $beforeNeedle);
+    return mb_strstr($haystack, $needle, $beforeNeedle, PYNCER_ENCODING);
 }
 function to_lower(string $s): string
 {
-    return mb_strtolower($s);
+    return mb_strtolower($s, PYNCER_ENCODING);
 }
 function to_upper(string $s): string
 {
-    return mb_strtoupper($s);
+    return mb_strtoupper($s, PYNCER_ENCODING);
 }
 function sub_count(string $haystack, string $needle): int
 {
-    return mb_substr_count($haystack, $needle);
+    return mb_substr_count($haystack, $needle, PYNCER_ENCODING);
 }
 function sub(string $s, int $start, ?int $length = null): string
 {
-    return mb_substr($s, $start, $length);
+    return mb_substr($s, $start, $length, PYNCER_ENCODING);
 }

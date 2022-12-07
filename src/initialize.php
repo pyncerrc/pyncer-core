@@ -12,6 +12,12 @@ use const PHP_EOL;
 
 defined('Pyncer\NL') or define('Pyncer\NL', "\n");
 
+defined('Pyncer\ENCODING') or define('Pyncer\ENCODING', 'UTF-8');
+
+mb_internal_encoding(ENCODING);
+mb_http_output(ENCODING);
+mb_regex_encoding(ENCODING);
+
 defined('Pyncer\NOW') or define('Pyncer\NOW', time());
 defined('Pyncer\DATE_FORMAT') or define('Pyncer\DATE_FORMAT', 'Y-m-d');
 defined('Pyncer\TIME_FORMAT') or define('Pyncer\TIME_FORMAT', 'H:i:s');
