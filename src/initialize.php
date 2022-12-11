@@ -6,9 +6,11 @@ use function define;
 use function defined;
 use function getcwd;
 use function time;
+use function mb_internal_encoding;
+use function mb_http_output;
+use function mb_regex_encoding;
 
 use const DIRECTORY_SEPARATOR;
-use const PHP_EOL;
 
 defined('Pyncer\NL') or define('Pyncer\NL', "\n");
 
