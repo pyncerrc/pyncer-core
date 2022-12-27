@@ -54,9 +54,6 @@ function nullify(?string $value, mixed $default = null): mixed
  */
 function ensure_ends_with(string $s, string $with): string
 {
-    $s = strval($s);
-    $with = strval($with);
-
     $len = strlen($with);
     $pos = strlen($s) - $len;
     if (substr($s, $pos, $len) != $with) {
@@ -75,9 +72,6 @@ function ensure_ends_with(string $s, string $with): string
  */
 function ensure_starts_with(string $s, string $with): string
 {
-    $s = strval($s);
-    $with = strval($with);
-
     $len = strlen($with);
     if (substr($s, 0, $len) != $with) {
         return $with . $s;
@@ -86,50 +80,61 @@ function ensure_starts_with(string $s, string $with): string
     }
 }
 
-function pos_array(string $haystack, array $needles, ?int $offset = null): ?array
+function contains_array(string $haystack, array $needle): bool
 {
-    if ($offset === null) {
-        $offset = 0;
+    foreach ($needles as $needle) {
+        if (str_contains($haystack, $need)) {
+            return true;
+        }
     }
 
-    $index = null;
+    return false;
+}
 
-    foreach ($needles as $n) {
-        $pos = strpos($haystack, $n, $offset);
+function pos_array(string $haystack, array $needles, int $offset = 0): false|array
+{
+    $index = false;
+
+    foreach ($needles as $needle) {
+        $pos = pos($haystack, $needle, $offset);
 
         if ($pos === false) {
             continue;
         }
 
-        if ($index === null || $pos < $index[1]) {
-            $index = [$n, $pos];
-        } elseif ($pos == $index[1] && strlen($n) > strlen($index[1])) { // Greedy needle
-            $index[0] = $n;
+        if ($index === false || $pos < $index[1]) {
+            $index = [
+                'needle' => $needle,
+                'index' => $pos,
+            ];
+        } elseif ($pos == $index[1] && len($needle) > len($index[1])) { // Greedy needle
+            $index['needle'] = $needle;
         }
     }
 
     return $index;
 }
 
-function rpos_array(string $haystack, array $needles, ?int $offset = null): ?array
+function rpos_array(string $haystack, array $needles, ?int $offset = null): false|array
 {
-    if ($offset === null) {
-        $offset = 0;
-    }
+    $offset ??= 0;
 
-    $index = null;
+    $index = false;
 
     foreach ($needles as $n) {
-        $pos = strrpos($haystack, $n, $offset);
+        $pos = rpos($haystack, $n, $offset);
 
         if ($pos === false) {
             continue;
         }
 
-        if (!$index || $pos > $index[1]) {
-            $index = [$n, $pos];
-        } elseif ($pos == $index[1] && strlen($n) > strlen($index[1])) { // Greedy needle
-            $index[0] = $n;
+        if ($index === false || $pos > $index[1]) {
+            $index = [
+                'needle' => $needle,
+                'index' => $pos,
+            ];
+        } elseif ($pos == $index[1] && len($n) > len($index[1])) { // Greedy needle
+            $index['needle'] = $n;
         }
     }
 
@@ -191,7 +196,6 @@ function remove_characters(string $s, string $pattern): string
 {
     $new_str = '';
 
-    $s = strval($s);
     $len = strlen($s);
     for ($i = 0; $i < $len; ++$i) {
         if (!preg_match($pattern, $s[$i])) {
@@ -206,7 +210,6 @@ function retain_characters(string $s, string $pattern): string
 {
     $new_str = '';
 
-    $s = strval($s);
     $len = strlen($s);
     for ($i = 0; $i < $len; ++$i) {
         if (preg_match($pattern, $s[$i])) {
@@ -250,10 +253,6 @@ function trim_string(string $s, string $start, ?string $end = null, bool $once =
 
 function ltrim_string(string $s, string $remove, bool $once = false): string
 {
-
-    $s = strval($s);
-    $remove = strval($remove);
-
     if ($s === $remove) {
         return '';
     }
@@ -276,9 +275,6 @@ function ltrim_string(string $s, string $remove, bool $once = false): string
 
 function rtrim_string(string $s, string $remove, bool $once = false): string
 {
-    $s = strval($s);
-    $remove = strval($remove);
-
     if ($s === $remove) {
         return '';
     }
@@ -301,9 +297,7 @@ function rtrim_string(string $s, string $remove, bool $once = false): string
 
 function trim_all(string $s, array $start, ?array $end = null): string
 {
-    if ($end === null) {
-        $end = $start;
-    }
+    $end ??= $start;
 
     $s = ltrim_all($s, $start);
     $s = rtrim_all($s, $end);

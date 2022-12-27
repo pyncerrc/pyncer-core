@@ -218,7 +218,7 @@ function merge_recursive(iterable ...$arrays): array
     return $newa;
 }
 
-function merge_implode($glue, iterable ...$arrays): array
+function merge_implode(string $glue, iterable ...$arrays): array
 {
     $newa = [];
 
@@ -333,14 +333,14 @@ function nullify_values(iterable $array, $default = null) {
     return $new;
 }
 
-function data_explode($delimiter, $s)
+function data_explode(string $delimiter, string $s)
 {
     $s = php_explode($delimiter, $s);
     $s = array_map('trim', $s);
     $s = unset_empty($s);
     return $s;
 }
-function data_implode($delimiter, iterable $array)
+function data_implode(string $delimiter, iterable $array)
 {
     if ($array instanceof Traversable) {
         $array = iterator_to_array($array, false);
@@ -378,7 +378,7 @@ function index_count(array $array): int
  * @param mixed $array The array to ensure has the speicified number of values
  * @param int $count The number of values to ensure the array contains
  */
-function ensure_index_count(array $array, $count, $default = null)
+function ensure_index_count(array $array, int $count, mixed $default = null)
 {
     $start = index_count($array);
     $len = $count - $start;

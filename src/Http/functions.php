@@ -13,6 +13,7 @@ use function http_build_query;
 use function implode;
 use function in_array;
 use function is_array;
+use function is_string;
 use function parse_str;
 use function preg_replace_callback;
 use function Pyncer\String\len as pyncer_str_len;
@@ -53,8 +54,6 @@ function clean_url(string $url): string
 }
 function clean_path(string $path): string
 {
-    $path = strval($path);
-
     if ($path === '') {
         return '';
     }
@@ -102,51 +101,18 @@ function rtrim_path(string $path, string $trim): string
 
 function parse_url_query(string $query): array
 {
-    $q = [];
-
-    $query = ltrim(strval($query), '?');
-
-    if (!$query) {
-        return $q;
-    }
-
-    foreach (explode('&', $query) as $part) {
-        $part = explode('=', $part, 2);
-        $count = count($part);
-
-        // TODO: Replace parse_str with non mangling function
-        // The parse_str function does not suxp empty values
-        // so we set it as one and remove it after
-        if ($count == 1) {
-            $part[1] = 1;
-        }
-
-        $single = [];
-        parse_str($part[0] . '=' . $part[1], $single);
-
-        // Change the overriden value back to null
-        if ($count == 1) {
-            if (is_array($single[1])) {
-                array_walk_recursive($single, function(&$value, $key) {
-                    $value = null;
-                });
-            } else {
-                $single[1] = null;
-            }
-        }
-
-        $q = array_merge($q, $single);
-    }
-
-    return $q;
+    parse_str($query, $parsed);
+    return $parsed;
 }
-function merge_url_queries(string|array ...$queries): array
+function merge_url_queries(string|iterable ...$queries): array
 {
     $q = [];
 
     foreach ($queries as $query) {
-        if (!is_array($query)) {
+        if (is_string($query)) {
             $query = parse_url_query($query);
+        } elseif ($query instanceof Traversable) {
+            $query = iterator_to_array($query, true);
         }
 
         $q = array_merge($q, $query);
@@ -154,16 +120,18 @@ function merge_url_queries(string|array ...$queries): array
 
     return $q;
 }
-function build_url_query(array $query, int $encodeMethod = PHP_QUERY_RFC3986): string
+function build_url_query(iterable $query, int $encodeMethod = PHP_QUERY_RFC3986): string
 {
+    if ($query instanceof Traversable) {
+        $query = iterator_to_array($query, true);
+    }
+
     $queryParts = [];
 
     foreach ($query as $key => $value) {
         $key = encode_url($key, $encodeMethod);
 
-        if ($value === null) {
-            $queryParts[] = $key;
-        } elseif (is_array($value)) {
+        if (is_array($value)) {
             $queryParts[] = http_build_query([$key => $value], null, '&', $encodeMethod);
         } else {
             $value = encode_url($value, $encodeMethod);
@@ -174,50 +142,52 @@ function build_url_query(array $query, int $encodeMethod = PHP_QUERY_RFC3986): s
     return implode('&', $queryParts);
 }
 
-function to_relative_url(string $url, string $to = null): string
+function relative_url(string $url, ?string $to = null): string
 {
-    $to = strval($to);
-    if ($to !== '') {
+    if ($to !== null) {
         // Remove protocal if any
-        $pos = pyncer_str_pos($to, '//');
+        $pos = strpos($to, '//');
         if ($pos === false) {
             $website_domain = $to;
         } else {
-            $website_domain = pyncer_str_sub($to, $pos + 2);
+            $website_domain = substr($to, $pos + 2);
         }
         $website_domain = rtrim($website_domain, '/');
 
         // Remove protocal if any
-        $pos = pyncer_str_pos($url, '//');
+        $pos = strpos($url, '//');
         if ($pos === false) {
             $url_domain = $url;
         } else {
-            $url_domain = pyncer_str_sub($url, $pos + 2);
+            $url_domain = substr($url, $pos + 2);
         }
-        $protocal = ($url_domain != $url);
+        $protocal = ($url_domain !== $url);
 
         // Remove www. before comparing
-        if (pyncer_str_sub($website_domain, 0, 4) == 'www.') {
-            $website_domain = pyncer_str_sub($website_domain, 4);
+        if (substr($website_domain, 0, 4) == 'www.') {
+            $website_domain = substr($website_domain, 4);
         }
-        if (pyncer_str_sub($url_domain, 0, 4) == 'www.') {
-            $url_domain = pyncer_str_sub($url_domain, 4);
+
+        if (substr($url_domain, 0, 4) == 'www.') {
+            $url_domain = substr($url_domain, 4);
         }
 
         // If on same host, convert to relative
-        if (pyncer_ltrim_string($url_domain, $website_domain) !== false) {
-            $pos = pyncer_str_pos($url, $website_domain) + pyncer_str_len($website_domain);
-            $char = pyncer_str_sub($url, $pos, 1);
+        if (pyncer_ltrim_string($url_domain, $website_domain) !== $url_domain) {
+            $pos = strpos($url, $website_domain) + strlen($website_domain);
+            $char = strlen($url, $pos, 1);
             // Make sure end of domain is a separator character
             // example.com/ vs example.comm/
             if (!$char || in_array($char, ['/', '?', '#'])) {
-                $url = pyncer_str_sub($url, $pos);
+                $url = substr($url, $pos);
 
                 if (!$url) {
                     $url = '/';
                 }
             }
-        } elseif (!$protocal && !in_array(pyncer_str_sub($url, 0, 1), ['/', '?', '#'])) {
+        } elseif (!$protocal &&
+            !in_array(substr($url, 0, 1), ['/', '?', '#'])
+        ) {
             // Determine if there is a domain present
             $pos = pyncer_str_pos_array($url, ['/', '?', '#']);
             if ($pos !== false) {
@@ -227,7 +197,7 @@ function to_relative_url(string $url, string $to = null): string
             }
 
             // If there is a dot, then there is a domain
-            if (pyncer_str_pos($url_domain, '.') !== false) {
+            if (str_contains($url_domain, '.')) {
                 $url = 'http://' . $url;
             } else {
                 $url = '/' . $url;
@@ -237,12 +207,14 @@ function to_relative_url(string $url, string $to = null): string
         return $url;
     }
 
-    $pos = pyncer_str_pos($url, '://');
-    if ($pos !== false) {
-        $url = pyncer_str_sub($url, $pos + 3);
+    $offset = strpos($url, '://');
+    if ($offset !== false) {
+        $offset += 3;
+    } else {
+        $offset = 0;
     }
 
-    $pos = pyncer_str_pos_array($url, ['/', '?', '#']);
+    $pos = pyncer_str_pos_array($url, ['/', '?', '#'], $offset);
 
     // Nothing after the domain
     if ($pos === false) {
@@ -256,13 +228,50 @@ function to_relative_url(string $url, string $to = null): string
 
     return $url;
 }
-function to_absolute_url(string $url, string $to): string
+function absolute_url(string $url, string $to): string
 {
     if (pyncer_str_sub($url, 0, 1) == '/') {
         return rtrim($to, '/') . $url;
     }
 
     return $url;
+}
+
+function url_equals(string $url1, string $url2): bool
+{
+    // Parse the URLs into their component parts
+    $parts1 = parse_url($url1);
+    $parts2 = parse_url($url2);
+
+    $host1 = $parts1['host'] ?? null;
+    $host2 = $parts2['host'] ?? null;
+
+    // Check if the host and path are equal
+    if ($host1 !== $host2) {
+        return false;
+    }
+
+    $path1 = rtrim($parts1['path'] ?? '', '/');
+    $path2 = rtrim($parts2['path'] ?? '', '/');
+
+    if ($path1 !== $path2) {
+        return false;
+    }
+
+    // Parse the query strings into arrays of parameters
+    parse_str($parts1['query'] ?? '', $query1);
+    parse_str($parts2['query'] ?? '', $query2);
+
+    // Sort the arrays of parameters
+    ksort($query1);
+    ksort($query2);
+
+    // Check if the sorted arrays of parameters are equal
+    if ($query1 !== $query2) {
+        return false;
+    }
+
+    return true;
 }
 
 function encode_url(string $url, int $encodeMethod = PHP_QUERY_RFC3986): string
@@ -288,7 +297,7 @@ function encode_url_path(string $path, int $encodeMethod = PHP_QUERY_RFC3986): ?
 {
     return preg_replace_callback(
         '/(?:[^a-zA-Z0-9_\-\.~!\$&\'\(\)\*\+,;=%:@\/]+|%(?![A-Fa-f0-9]{2}))/',
-        function ($match) {
+        function ($match) use ($encodeMethod) {
             return encode_url($match[0], $encodeMethod);
         },
         $path
