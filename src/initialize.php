@@ -6,19 +6,10 @@ use function define;
 use function defined;
 use function getcwd;
 use function time;
-use function mb_internal_encoding;
-use function mb_http_output;
-use function mb_regex_encoding;
-
-use const DIRECTORY_SEPARATOR;
 
 defined('Pyncer\NL') or define('Pyncer\NL', "\n");
 
 defined('Pyncer\ENCODING') or define('Pyncer\ENCODING', 'UTF-8');
-
-mb_internal_encoding(ENCODING);
-mb_http_output(ENCODING);
-mb_regex_encoding(ENCODING);
 
 defined('Pyncer\NOW') or define('Pyncer\NOW', time());
 defined('Pyncer\DATE_FORMAT') or define('Pyncer\DATE_FORMAT', 'Y-m-d');

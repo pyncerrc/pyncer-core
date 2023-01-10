@@ -1,0 +1,14 @@
+parameters:
+    level: max
+    paths:
+        - src
+        - tests
+    ignoreErrors:
+        -
+            message: "#^Used constant Pyncer\\\\IO\\\\DIR_ROOT not found\\.$#"
+            count: 1
+            path: src/IO/functions.php
+        -
+            message: "#^Used constant Pyncer\\\\NOW not found\\.$#"
+            count: 1
+            path: src/functions.php

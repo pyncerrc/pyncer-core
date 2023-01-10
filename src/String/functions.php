@@ -1,6 +1,7 @@
 <?php
 namespace Pyncer\String;
 
+use Pyncer\Exception\InvalidArgumentException;
 use Pyncer\Exception\UnexpectedValueException;
 
 use function array_splice;
@@ -49,17 +50,17 @@ function nullify(?string $value, mixed $default = null): mixed
  * Returns the string appended with another if it doesn't
  * already end with it
  *
- * @param string $s A string to check against
+ * @param string $string A string to check against
  * @param string $with A value the string must end with
  */
-function ensure_ends_with(string $s, string $with): string
+function ensure_ends_with(string $string, string $with): string
 {
     $len = strlen($with);
-    $pos = strlen($s) - $len;
-    if (substr($s, $pos, $len) != $with) {
-        return $s . $with;
+    $pos = strlen($string) - $len;
+    if (substr($string, $pos, $len) !== $with) {
+        return $string . $with;
     } else {
-        return $s;
+        return $string;
     }
 }
 
@@ -67,23 +68,28 @@ function ensure_ends_with(string $s, string $with): string
  * Returns the string prepended with another if it doesn't
  * already start with it
  *
- * @param string $s A string to check against
+ * @param string $string A string to check against
  * @param string $with A value the string must start with
  */
-function ensure_starts_with(string $s, string $with): string
+function ensure_starts_with(string $string, string $with): string
 {
     $len = strlen($with);
-    if (substr($s, 0, $len) != $with) {
-        return $with . $s;
+    if (substr($string, 0, $len) !== $with) {
+        return $with . $string;
     } else {
-        return $s;
+        return $string;
     }
 }
 
-function contains_array(string $haystack, array $needle): bool
+/**
+ * @param string $haystack The string to search in.
+ * @param array<string> $needles An array of strings to search for.
+ * @return bool True if any of the needles were found, otherwise false.
+ */
+function contains_array(string $haystack, array $needles): bool
 {
     foreach ($needles as $needle) {
-        if (str_contains($haystack, $need)) {
+        if (str_contains($haystack, $needle)) {
             return true;
         }
     }
@@ -91,7 +97,14 @@ function contains_array(string $haystack, array $needle): bool
     return false;
 }
 
-function pos_array(string $haystack, array $needles, int $offset = 0): false|array
+/**
+ * @param string $haystack The string to search in.
+ * @param array<string> $needles An array of strings to search for.
+ * @param int $offset
+ * @return array{'needle': string, 'index': int} An array containing the
+ *      needle and index position if a needle is found, otherwise false.
+ */
+function pos_array(string $haystack, array $needles, int $offset = 0): array|false
 {
     $index = false;
 
@@ -102,12 +115,15 @@ function pos_array(string $haystack, array $needles, int $offset = 0): false|arr
             continue;
         }
 
-        if ($index === false || $pos < $index[1]) {
+        if ($index === false || $pos < $index['index']) {
             $index = [
                 'needle' => $needle,
                 'index' => $pos,
             ];
-        } elseif ($pos == $index[1] && len($needle) > len($index[1])) { // Greedy needle
+        } elseif ($pos == $index['index'] &&
+            len($needle) > len($index['needle'])
+        ) {
+            // Greedy needle
             $index['needle'] = $needle;
         }
     }
@@ -115,33 +131,41 @@ function pos_array(string $haystack, array $needles, int $offset = 0): false|arr
     return $index;
 }
 
-function rpos_array(string $haystack, array $needles, ?int $offset = null): false|array
+/**
+ * @param string $haystack The string to search in.
+ * @param array<string> $needles An array of strings to search for.
+ * @param int $offset
+ * @return array{'needle': string, 'index': int} An array containing the
+ *      needle and index position if a needle is found, otherwise false.
+ */
+function rpos_array(string $haystack, array $needles, int $offset = 0): array|false
 {
-    $offset ??= 0;
-
     $index = false;
 
-    foreach ($needles as $n) {
-        $pos = rpos($haystack, $n, $offset);
+    foreach ($needles as $needle) {
+        $pos = rpos($haystack, $needle, $offset);
 
         if ($pos === false) {
             continue;
         }
 
-        if ($index === false || $pos > $index[1]) {
+        if ($index === false || $pos > $index['index']) {
             $index = [
                 'needle' => $needle,
                 'index' => $pos,
             ];
-        } elseif ($pos == $index[1] && len($n) > len($index[1])) { // Greedy needle
-            $index['needle'] = $n;
+        } elseif ($pos == $index['index'] &&
+            len($needle) > len($index['needle'])
+        ) {
+            // Greedy needle
+            $index['needle'] = $needle;
         }
     }
 
     return $index;
 }
 
-function rpos_index(string $haystack, string $needle, ?int $index = null): int
+function rpos_index(string $haystack, string $needle, ?int $index = null): int|false
 {
     if ($index === null) {
         $index = len($haystack);
@@ -181,87 +205,85 @@ function replace_repeating(string $search, string $replace, string $subject): st
     return $new_str;
 }
 
-function line_count(string $s): int
+function line_count(string $string): int
 {
     // Normalize newlines
-    $s = str_replace("\r\n", "\n", $s);
-    $s = str_replace("\r", "\n", $s);
+    $string = str_replace("\r\n", "\n", $string);
+    $string = str_replace("\r", "\n", $string);
 
-    $s = explode("\n", $s);
+    $string = explode("\n", $string);
 
-    return count($s);
+    return count($string);
 }
 
-function remove_characters(string $s, string $pattern): string
+function remove_characters(string $string, string $pattern): string
 {
     $new_str = '';
 
-    $len = strlen($s);
+    $len = strlen($string);
     for ($i = 0; $i < $len; ++$i) {
-        if (!preg_match($pattern, $s[$i])) {
-            $new_str .= $s[$i];
+        if (!preg_match($pattern, $string[$i])) {
+            $new_str .= $string[$i];
         }
     }
 
     return $new_str;
 }
 
-function retain_characters(string $s, string $pattern): string
+function retain_characters(string $string, string $pattern): string
 {
     $new_str = '';
 
-    $len = strlen($s);
+    $len = strlen($string);
     for ($i = 0; $i < $len; ++$i) {
-        if (preg_match($pattern, $s[$i])) {
-            $new_str .= $s[$i];
+        if (preg_match($pattern, $string[$i])) {
+            $new_str .= $string[$i];
         }
     }
 
     return $new_str;
-}
-
-function char_array(string $s): array
-{
-    $chars = [];
-
-    $len = len($s);
-    for ($i = 0; $i < $len; ++$i) {
-        $chars[] = sub($s, $i, 1);
-    }
-
-    return $chars;
 }
 
 /**
- * Returns the specifed string with the specifed start and end string removed
+ * Returns a string with the specifed start and end strings trimmed from the
+ * beginning and end.
  *
- * @param string $s A string to remove surounding strings from
+ * @param string $string A string to remove surounding strings from
  * @param string $start A value the string must start with to remove
- * @param mixed $end A value the string must ends with to remove
+ * @param null|string $end A value the string must ends with to remove
  */
-function trim_string(string $s, string $start, ?string $end = null, bool $once = false): string
+function trim_string(
+    string $string,
+    string $start,
+    ?string $end = null,
+    bool $once = false
+): string
 {
     if ($end === null) {
         $end = $start;
     }
 
-    $s = ltrim_string($s, $start, $once);
-    $s = rtrim_string($s, $end, $once);
+    $string = ltrim_string($string, $start, $once);
+    $string = rtrim_string($string, $end, $once);
 
-    return $s;
+    return $string;
 }
 
-function ltrim_string(string $s, string $remove, bool $once = false): string
+function ltrim_string(
+    string $string,
+    string $remove,
+    bool $once = false
+): string
 {
-    if ($s === $remove) {
+    if ($string === $remove) {
         return '';
     }
 
     $len = strlen($remove);
 
     while (true) {
-        if (substr($s, 0, $len) === $remove) {
-            $s = substr($s, $len);
+        if (substr($string, 0, $len) === $remove) {
+            $string = substr($string, $len);
             if (!$once) {
                 continue;
             }
@@ -270,20 +292,24 @@ function ltrim_string(string $s, string $remove, bool $once = false): string
         break;
     }
 
-    return $s;
+    return $string;
 }
 
-function rtrim_string(string $s, string $remove, bool $once = false): string
+function rtrim_string(
+    string $string,
+    string $remove,
+    bool $once = false
+): string
 {
-    if ($s === $remove) {
+    if ($string === $remove) {
         return '';
     }
 
     $len = -strlen($remove);
 
     while (true) {
-        if (substr($s, $len) === $remove) {
-            $s = substr($s, 0, $len);
+        if (substr($string, $len) === $remove) {
+            $string = substr($string, 0, $len);
             if (!$once) {
                 continue;
             }
@@ -292,82 +318,100 @@ function rtrim_string(string $s, string $remove, bool $once = false): string
         break;
     }
 
-    return $s;
+    return $string;
 }
 
-function trim_all(string $s, array $start, ?array $end = null): string
+/**
+ * Trims an array of values from the beginning and end of the a string.
+ *
+ * If the third parameter is not specified, the the sencond parameter will be
+ * used to trim the end of the string.
+ *
+ * @param string $string A String to trim.
+ * @param array<string> $start An array of values to left trim with.
+ * @param null|array<string> $end An array of values to right trim with.
+ * @return string The trimmed string.
+ */
+function trim_all(string $string, array $start, ?array $end = null): string
 {
     $end ??= $start;
 
-    $s = ltrim_all($s, $start);
-    $s = rtrim_all($s, $end);
+    $string = ltrim_all($string, $start);
+    $string = rtrim_all($string, $end);
 
-    return $s;
+    return $string;
 }
 
 /**
- * @param string $s A string to check against
- * @param array $with An array of values the string must end with
+ * Trims an array of values from the end of the a string.
+ *
+ * @param string $string A string to right trim.
+ * @param array<string> $with An array of values to right trim.
+ * @return string The trimmed string.
  */
-function rtrim_all(string $s, array $with): string
+function rtrim_all(string $string, array $with): string
 {
     // TODO: Add sort function so longest match gets removed
     // TODO: Encase in while so all instances are taken care of...
     foreach ($with as $value) {
-        if ($s === strval($value)) {
+        if ($string === strval($value)) {
             return '';
         }
 
-        $pos = strlen($s) - strlen($value);
-        if ($pos > 0 && substr($s, $pos) == $value) {
-            return substr($s, 0, $pos);
+        $pos = strlen($string) - strlen($value);
+        if ($pos > 0 && substr($string, $pos) == $value) {
+            return substr($string, 0, $pos);
         }
     }
 
-    return $s;
+    return $string;
 }
 
 /**
- * @param string $s A string to check against
- * @param array $with An array of values the string must start with
+ * Trims an array of values from the beginning of the a string.
+ *
+ * @param string $string A string to left trim.
+ * @param array<string> $with An array of values to left trim.
+ * @return string The trimmed string.
  */
-function ltrim_all(string $s, array $with): string
+function ltrim_all(string $string, array $with): string
 {
     // TODO: Add sort function so longest match gets removed
     // TODO: Encase in while so all instances are taken care of...
     foreach ($with as $value) {
-        if ($s === strval($value)) {
+        if ($string === strval($value)) {
             return '';
         }
 
         $len = strlen($value);
-        if (substr($s, 0, $len) == $value) {
-            return substr($s, $len);
+        if (substr($string, 0, $len) == $value) {
+            return substr($string, $len);
         }
     }
 
-    return $s;
+    return $string;
 }
 
-function ucfirst(string $s): string
+function ucfirst(string $string): string
 {
-    switch (len($s) ) {
+    switch (len($string) ) {
         case 0:
             return '';
         case 1:
-            return to_upper($s);
+            return to_upper($string);
         default:
-            preg_match('/^(.{1})(.*)$/us', $s, $matches);
+            preg_match('/^(.{1})(.*)$/us', $string, $matches);
             return to_upper($matches[1]) . $matches[2];
     }
 }
-function ucwords(string $s): string
+
+function ucwords(string $string): string
 {
     // Note: [\x0c\x09\x0b\x0a\x0d\x20] matches:
     // form feeds, horizontal tabs, vertical tabs, linefeeds and carriage returns
     // This corresponds to the definition of a "word" defined at http://www.php.net/ucwords
     $pattern = '/(^|([\x0c\x09\x0b\x0a\x0d\x20]+))([^\x0c\x09\x0b\x0a\x0d\x20]{1})[^\x0c\x09\x0b\x0a\x0d\x20]*/u';
-    return preg_replace_callback(
+    $result = preg_replace_callback(
         $pattern,
         function ($matches)
         {
@@ -376,79 +420,108 @@ function ucwords(string $s): string
             $ucword = sub_replace(ltrim($matches[0]), $ucfirst, 0, 1);
             return $leadingws . $ucword;
         },
-        $s
+        $string
     );
+
+    return strval($result);
 }
-function sub_replace(string $s, string $replace, int $offset, ?int $length = null): string
+
+function sub_replace(string $string, string $replace, int $offset, ?int $length = null): string
 {
-    preg_match_all('/./us', $s, $ar);
+    preg_match_all('/./us', $string, $ar);
     preg_match_all('/./us', $replace, $rar);
 
     if ($length === null) {
-        $length = len($s);
+        $length = len($string);
     }
 
     array_splice($ar[0], $offset, $length, $rar[0]);
 
     return join('', $ar[0]);
 }
-function convert_kana(string $s, string $mode = 'KV'): string
+
+function convert_kana(string $string, string $mode = 'KV'): string
 {
-    return mb_convert_kana($s, $mode, PYNCER_ENCODING);
+    return mb_convert_kana($string, $mode, PYNCER_ENCODING);
 }
-function split(string $s, int $length = 1): array
+
+/**
+ * Splits a string into an array of its characters.
+ *
+ * @param string $string The string to split.
+ * @param int $length The number of characters in each array entry.
+ * @return array<string> The split string.
+ */
+function split(string $string, int $length = 1): array
 {
-    return mb_str_split($s, $option, PYNCER_ENCODING);
+    if ($length < 1) {
+        throw new InvalidArgumentException('Length must be greater than one.');
+    }
+
+    return mb_str_split($string, $length, PYNCER_ENCODING);
 }
-function ipos(string $haystack, string $needle, ?int $offset = null): int|false
+
+function ipos(string $haystack, string $needle, int $offset = 0): int|false
 {
     return mb_stripos($haystack, $needle, $offset, PYNCER_ENCODING);
 }
+
 function istr(string $haystack, string $needle, bool $beforeNeedle = false): string|false
 {
     return mb_stristr($haystack, $needle, $beforeNeedle, PYNCER_ENCODING);
 }
-function len(string $s): int
+
+function len(string $string): int
 {
-    return mb_strlen($s, PYNCER_ENCODING);
+    return mb_strlen($string, PYNCER_ENCODING);
 }
+
 function pos(string $haystack, string $needle, int $offset = 0): int|false
 {
     return mb_strpos($haystack, $needle, $offset, PYNCER_ENCODING);
 }
-function rchr(string $haystack, string $needle, bool $beforeNeedle = null): string|false
+
+function rchr(string $haystack, string $needle, bool $beforeNeedle = false): string|false
 {
     return mb_strrchr($haystack, $needle, $beforeNeedle, PYNCER_ENCODING);
 }
-function richr(string $haystack, string $needle, bool $beforeNeedle = null): string|false
+
+function richr(string $haystack, string $needle, bool $beforeNeedle = false): string|false
 {
     return mb_strrichr($haystack, $needle, $beforeNeedle, PYNCER_ENCODING);
 }
+
 function ripos(string $haystack, string $needle, int $offset = 0): int|false
 {
     return mb_strripos($haystack, $needle, $offset, PYNCER_ENCODING);
 }
+
 function rpos(string $haystack, string $needle, int $offset = 0): int|false
 {
     return mb_strrpos($haystack, $needle, $offset, PYNCER_ENCODING);
 }
+
 function str(string $haystack, string $needle, bool $beforeNeedle = false): string|false
 {
     return mb_strstr($haystack, $needle, $beforeNeedle, PYNCER_ENCODING);
 }
-function to_lower(string $s): string
+
+function to_lower(string $string): string
 {
-    return mb_strtolower($s, PYNCER_ENCODING);
+    return mb_strtolower($string, PYNCER_ENCODING);
 }
-function to_upper(string $s): string
+
+function to_upper(string $string): string
 {
-    return mb_strtoupper($s, PYNCER_ENCODING);
+    return mb_strtoupper($string, PYNCER_ENCODING);
 }
+
 function sub_count(string $haystack, string $needle): int
 {
     return mb_substr_count($haystack, $needle, PYNCER_ENCODING);
 }
-function sub(string $s, int $start, ?int $length = null): string
+
+function sub(string $string, int $start, ?int $length = null): string
 {
-    return mb_substr($s, $start, $length, PYNCER_ENCODING);
+    return mb_substr($string, $start, $length, PYNCER_ENCODING);
 }
