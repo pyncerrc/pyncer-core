@@ -27,6 +27,11 @@ function to_snake_case(string $string): string
     return implode('_', array_map('strtolower', split_case($string)));
 }
 
+function to_kebab_case(string $string): string
+{
+    return implode('-', array_map('strtolower', split_case($string)));
+}
+
 /**
  * Splits a name at capitalized words or underscores.
  *
@@ -35,13 +40,12 @@ function to_snake_case(string $string): string
  */
 function split_case(string $string): array
 {
-    preg_match_all(
-        '/[A-Z0-9][^A-Z0-9_]*+|(?:\A|(?<=_))[^A-Z0-9_]++|\A\z/',
+    return preg_split(
+        '/((?<=[a-z])(?=[A-Z])|(?=[A-Z][a-z])|_|-)/',
         $string,
-        $matches
+        0,
+        PREG_SPLIT_NO_EMPTY
     );
-
-    return $matches[0];
 }
 
 function class_parents(

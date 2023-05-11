@@ -1,5 +1,15 @@
 # Change Log
 
+## 1.1.0 - 2023-05-11
+
+### Added
+
+- Added to\_kebab\_case utility function.
+
+### Changed
+
+- split\_case function now handles splitting kebab case
+
 ## 1.0.1 - 2023-01-09
 
 ### Fixed
