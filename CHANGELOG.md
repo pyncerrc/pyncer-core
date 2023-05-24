@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.1.1 - 2023-05-24
+
+### Changed
+
+- Normalized 'Chars' to 'Characters' to match the rest of Pyncer.
+
 ## 1.1.0 - 2023-05-11
 
 ### Added
