@@ -24,11 +24,11 @@ defined('Pyncer\IO\DIR_ROOT') or define('Pyncer\IO\DIR_ROOT', getcwd());
 defined('Pyncer\IO\MODE_FILE') or define('Pyncer\IO\MODE_FILE', 0644);
 defined('Pyncer\IO\MODE_DIR') or define('Pyncer\IO\MODE_DIR', 0755);
 
-defined('Pyncer\IO\BAD_PATH_CHARS') or define('Pyncer\IO\BAD_PATH_CHARS', '/\\?*:|"<>');
+defined('Pyncer\IO\BAD_PATH_CHARACTERS') or define('Pyncer\IO\BAD_PATH_CHARACTERS', '/\\?*:|"<>');
 defined('Pyncer\IO\BAD_PATHS') or define('Pyncer\IO\BAD_PATHS', [
     '$Extend'
 ]);
-defined('Pyncer\IO\BAD_FILENAME_CHARS') or define('Pyncer\IO\BAD_FILENAME_CHARS', '/\\?*:|"<>');
+defined('Pyncer\IO\BAD_FILENAME_CHARACTERS') or define('Pyncer\IO\BAD_FILENAME_CHARACTERS', '/\\?*:|"<>');
 defined('Pyncer\IO\BAD_FILENAMES') or define('Pyncer\IO\BAD_FILENAMES', [
     'CON', 'PRN', 'AUX', 'CLOCK$', 'NUL',
     'COM0', 'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8', 'COM9',

@@ -66,9 +66,9 @@ use const DIRECTORY_SEPARATOR as DS;
 use const Pyncer\IO\MODE_DIR as PYNCER_IO_MODE_DIR;
 use const Pyncer\IO\MODE_FILE as PYNCER_IO_MODE_FILE;
 use const Pyncer\IO\DIR_ROOT as PYNCER_IO_DIR_ROOT;
-use const Pyncer\IO\BAD_PATH_CHARS as PYNCER_IO_BAD_PATH_CHARS;
+use const Pyncer\IO\BAD_PATH_CHARACTERS as PYNCER_IO_BAD_PATH_CHARACTERS;
 use const Pyncer\IO\BAD_PATHS as PYNCER_IO_BAD_PATHS;
-use const Pyncer\IO\BAD_FILENAME_CHARS as PYNCER_IO_BAD_FILENAME_CHARS;
+use const Pyncer\IO\BAD_FILENAME_CHARACTERS as PYNCER_IO_BAD_FILENAME_CHARACTERS;
 use const Pyncer\IO\BAD_FILENAMES as PYNCER_IO_BAD_FILENAMES;
 
 /**
@@ -960,7 +960,7 @@ function clean_path(string $path): string
         $value = strval($value);
 
         $value = preg_replace(
-            '/[' . preg_quote(PYNCER_IO_BAD_PATH_CHARS, '/') . ']/',
+            '/[' . preg_quote(PYNCER_IO_BAD_PATH_CHARACTERS, '/') . ']/',
             '_',
             $value
         );
@@ -1055,7 +1055,7 @@ function clean_filename(string $filename): string
     $filename = strval($filename);
 
     $filename = preg_replace(
-        '/[' . preg_quote(PYNCER_IO_BAD_FILENAME_CHARS, '/') . ']/',
+        '/[' . preg_quote(PYNCER_IO_BAD_FILENAME_CHARACTERS, '/') . ']/',
         '_',
         $filename
     );
