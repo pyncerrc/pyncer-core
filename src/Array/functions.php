@@ -887,7 +887,9 @@ function set_recursive(array $array, array $keys, mixed $value): array
 {
     if (!$keys) {
         if (!is_array($value)) {
-            throw new \InvalidArgumentException('Value must be an array if no keys specified.');
+            throw new InvalidArgumentException(
+                'Value must be an array if no keys specified.'
+            );
         }
 
         return $value;
@@ -895,7 +897,9 @@ function set_recursive(array $array, array $keys, mixed $value): array
 
     $key = array_shift($keys);
 
-    if (!array_key_exists($key, $array) || !is_array($array[$key])) {
+    if (!$keys) {
+        $array[$key] = $value;
+    } elseif (!array_key_exists($key, $array) || !is_array($array[$key])) {
         $array[$key] = set_recursive([], $keys, $value);
     } else {
         $array[$key] = set_recursive($array[$key], $keys, $value);

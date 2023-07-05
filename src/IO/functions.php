@@ -715,7 +715,7 @@ function delete(string $file): void
     closedir($handle);
 
     if (!rmdir($file)) {
-        throw new RuntimeException('Dir could not be deleted.');
+        throw new RuntimeException('Directory could not be deleted.');
     }
 }
 
