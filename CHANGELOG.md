@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.1.2 - 2023-07-05
+
+### Fixed
+
+- Fixed issue with Pyncer\Array\set\_recursive function.
+
 ## 1.1.1 - 2023-05-24
 
 ### Changed
