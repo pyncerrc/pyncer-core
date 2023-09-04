@@ -40,12 +40,18 @@ function to_kebab_case(string $string): string
  */
 function split_case(string $string): array
 {
-    return preg_split(
+    $result = preg_split(
         '/((?<=[a-z])(?=[A-Z])|(?=[A-Z][a-z])|_|-)/',
         $string,
         0,
         PREG_SPLIT_NO_EMPTY
     );
+
+    if ($result === false) {
+        return [];
+    }
+
+    return $result;
 }
 
 function class_parents(

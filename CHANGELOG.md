@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.1.3 - 2023-09-03
+
+### Fixed
+
+- Fixed bad return type possibility in split\_case utility function.
+
 ## 1.1.2 - 2023-07-05
 
 ### Fixed
