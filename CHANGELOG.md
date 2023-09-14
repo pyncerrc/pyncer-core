@@ -1,5 +1,16 @@
 # Change Log
 
+## 1.1.4 - 2023-09-14
+
+### Added
+
+- The date\_time function now supports passing true to mean use current time.
+
+### Changed
+
+- The date\_time function will now throw an InvalidArgumentException if the specified date is an invalid type.
+- The he and hd functions now use the ENCODING constant instead of 'UTF-8'.
+
 ## 1.1.3 - 2023-09-03
 
 ### Fixed

@@ -4,14 +4,19 @@ namespace Pyncer;
 use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
+use Pyncer\Exception\InvalidArgumentException;
+use Stringable;
 
 use function date_default_timezone_get;
+use function defined;
 use function html_entity_decode;
 use function htmlspecialchars;
 use function is_int;
+use function is_string;
 use function mb_internal_encoding;
 use function mb_http_output;
 use function mb_regex_encoding;
+use function time;
 
 use const Pyncer\NOW as PYNCER_NOW;
 use const Pyncer\ENCODING as PYNCER_ENCODING;
@@ -50,12 +55,13 @@ function nullify(mixed $value, mixed $default = null): mixed
 
 function he(string $string): string
 {
-    return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
+    return htmlspecialchars($string, ENT_QUOTES, PYNCER_ENCODING);
 }
+
 function hd(string $string): string
 {
     // We want to decode all entities, not just html entities
-    return html_entity_decode($string, ENT_QUOTES, 'UTF-8');
+    return html_entity_decode($string, ENT_QUOTES, PYNCER_ENCODING);
 }
 
 function date_time(mixed $date = -1, bool $local = false): ?DateTime
@@ -77,8 +83,10 @@ function date_time(mixed $date = -1, bool $local = false): ?DateTime
         return null;
     }
 
-    if (is_int($date)) {
-        if ($date == -1) {
+    if ($date === true) {
+        $date = '@' . time();
+    } elseif (is_int($date)) {
+        if ($date === -1) {
             if (defined('Pyncer\NOW')) {
                 $date = '@' . PYNCER_NOW;
             } else {
@@ -89,11 +97,15 @@ function date_time(mixed $date = -1, bool $local = false): ?DateTime
         }
     }
 
+    if (!is_string($date) && !$date instanceof Stringable) {
+        throw new InvalidArgumentException('Invalid date.');
+    }
+
     $date = new DateTime(strval($date));
 
     if (!$local) {
         // Timezone set outside of constructor since
-        // @xyz format ignores it otherwise
+        // \@xyz format ignores it otherwise
         $date->setTimezone(new DateTimeZone(date_default_timezone_get()));
     }
 
