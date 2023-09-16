@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.1.5 - 2023-09-16
+
+### Added
+
+- Added uid generation function.
+
 ## 1.1.4 - 2023-09-14
 
 ### Added

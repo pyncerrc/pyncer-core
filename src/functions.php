@@ -7,6 +7,7 @@ use DateTimeZone;
 use Pyncer\Exception\InvalidArgumentException;
 use Stringable;
 
+use function com_create_guid;
 use function date_default_timezone_get;
 use function defined;
 use function html_entity_decode;
@@ -16,7 +17,9 @@ use function is_string;
 use function mb_internal_encoding;
 use function mb_http_output;
 use function mb_regex_encoding;
+use function sprintf;
 use function time;
+use function trim;
 
 use const Pyncer\NOW as PYNCER_NOW;
 use const Pyncer\ENCODING as PYNCER_ENCODING;
@@ -110,4 +113,23 @@ function date_time(mixed $date = -1, bool $local = false): ?DateTime
     }
 
     return $date;
+}
+
+function uid(): string
+{
+    if (function_exists('com_create_guid') === true) {
+        return strtolower(trim(com_create_guid(), '{}'));
+    }
+
+    return sprintf(
+        '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+        mt_rand(0, 65535),
+        mt_rand(0, 65535),
+        mt_rand(0, 65535),
+        mt_rand(16384, 20479),
+        mt_rand(32768, 49151),
+        mt_rand(0, 65535),
+        mt_rand(0, 65535),
+        mt_rand(0, 65535)
+    );
 }
