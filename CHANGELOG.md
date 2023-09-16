@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.1.6 - 2023-09-16
+
+### Added
+
+- Added basify function.
+
 ## 1.1.5 - 2023-09-16
 
 ### Added

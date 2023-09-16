@@ -56,6 +56,26 @@ function nullify(mixed $value, mixed $default = null): mixed
     return $value;
 }
 
+/**
+ * @return null|bool|int|float|string|array<mixed>
+ */
+function basify(mixed $value): null|bool|int|float|string|array
+{
+    if (is_scalar($value) || is_array($value)) {
+        return $value;
+    }
+
+    if (is_iterable($value)) {
+        return [...$value];
+    }
+
+    if ($value instanceof Stringable) {
+        return strval($value);
+    }
+
+    return null;
+}
+
 function he(string $string): string
 {
     return htmlspecialchars($string, ENT_QUOTES, PYNCER_ENCODING);
