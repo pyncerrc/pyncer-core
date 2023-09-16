@@ -118,7 +118,11 @@ function date_time(mixed $date = -1, bool $local = false): ?DateTime
 function uid(): string
 {
     if (function_exists('com_create_guid') === true) {
-        return strtolower(trim(com_create_guid(), '{}'));
+        $uid = com_create_guid();
+
+        if ($uid !== false) {
+            return strtolower(trim($uid, '{}'));
+        }
     }
 
     return sprintf(
