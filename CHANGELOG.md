@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.1.7 - 2023-09-17
+
+### Added
+
+- Added scalarify and stringify functions.
+
 ## 1.1.6 - 2023-09-16
 
 ### Added

@@ -12,17 +12,22 @@ use function date_default_timezone_get;
 use function defined;
 use function html_entity_decode;
 use function htmlspecialchars;
+use function is_array;
 use function is_int;
+use function is_iterable;
+use function is_scalar;
 use function is_string;
 use function mb_internal_encoding;
 use function mb_http_output;
 use function mb_regex_encoding;
 use function sprintf;
+use function strval;
 use function time;
 use function trim;
 
-use const Pyncer\NOW as PYNCER_NOW;
+use const Pyncer\DATE_TIME_FORMAT as PYNCER_DATE_TIME_FORMAT;
 use const Pyncer\ENCODING as PYNCER_ENCODING;
+use const Pyncer\NOW as PYNCER_NOW;
 
 function initialize(): void
 {
@@ -61,7 +66,7 @@ function nullify(mixed $value, mixed $default = null): mixed
  */
 function basify(mixed $value): null|bool|int|float|string|array
 {
-    if (is_scalar($value) || is_array($value)) {
+    if (is_array($value)) {
         return $value;
     }
 
@@ -69,7 +74,37 @@ function basify(mixed $value): null|bool|int|float|string|array
         return [...$value];
     }
 
+    return scalarify($value);
+}
+
+/**
+ * @return null|bool|int|float|string
+ */
+function scalarify(mixed $value): null|bool|int|float|string
+{
+    if (is_scalar($value)) {
+        return $value;
+    }
+
+    if ($value instanceof DateTimeInterface) {
+        return $value->format(PYNCER_DATE_TIME_FORMAT);
+    }
+
     if ($value instanceof Stringable) {
+        return strval($value);
+    }
+
+    return null;
+}
+
+/**
+ * @return null|string
+ */
+function stringify(mixed $value): ?string
+{
+    $value = scalarify($value);
+
+    if ($value !== null) {
         return strval($value);
     }
 
