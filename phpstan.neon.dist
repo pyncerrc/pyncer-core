@@ -5,7 +5,7 @@ parameters:
         - tests
     ignoreErrors:
         -
-            message: "#^Used constant Pyncer\\\\IO\\\\DIR_ROOT not found\\.$#"
+            message: "#^Used constant Pyncer\\\\IO\\\\ROOT_DIR not found\\.$#"
             count: 1
             path: src/IO/functions.php
         -

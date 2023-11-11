@@ -63,9 +63,9 @@ use function unlink;
 use function uniqid;
 
 use const DIRECTORY_SEPARATOR as DS;
-use const Pyncer\IO\MODE_DIR as PYNCER_IO_MODE_DIR;
-use const Pyncer\IO\MODE_FILE as PYNCER_IO_MODE_FILE;
-use const Pyncer\IO\DIR_ROOT as PYNCER_IO_DIR_ROOT;
+use const Pyncer\IO\DIR_MODE as PYNCER_IO_DIR_MODE;
+use const Pyncer\IO\FILE_MODE as PYNCER_IO_FILE_MODE;
+use const Pyncer\IO\ROOT_DIR as PYNCER_IO_ROOT_DIR;
 use const Pyncer\IO\BAD_PATH_CHARACTERS as PYNCER_IO_BAD_PATH_CHARACTERS;
 use const Pyncer\IO\BAD_PATHS as PYNCER_IO_BAD_PATHS;
 use const Pyncer\IO\BAD_FILENAME_CHARACTERS as PYNCER_IO_BAD_FILENAME_CHARACTERS;
@@ -218,7 +218,7 @@ function write_file(
     string $file,
     string $data,
     bool $append = false,
-    ?int $mode = PYNCER_IO_MODE_FILE
+    ?int $mode = PYNCER_IO_FILE_MODE
 ): int
 {
     $dir = dirname($file);
@@ -290,7 +290,7 @@ function download_file(
     string $fileUrl,
     string $dir,
     string $filename = '',
-    ?int $mode = PYNCER_IO_MODE_FILE
+    ?int $mode = PYNCER_IO_FILE_MODE
 ): string
 {
     // Set pyncer as the user agent
@@ -371,7 +371,7 @@ function download_file(
 function move_uploaded_file(
     string $from,
     string $to,
-    ?int $mode = PYNCER_IO_MODE_FILE
+    ?int $mode = PYNCER_IO_FILE_MODE
 ): void
 {
     $dir = dirname($from);
@@ -778,15 +778,15 @@ function delete_matching(string $deleteDir, string $matchDir): void
  * @throws \Pyncer\Exception\RuntimeException If the directory could not
  *      be created.
  */
-function make_dir(string $dir, ?int $mode = PYNCER_IO_MODE_DIR): void
+function make_dir(string $dir, ?int $mode = PYNCER_IO_DIR_MODE): void
 {
     $dir = clean_dir($dir);
 
-    if (!defined('Pyncer\IO\DIR_ROOT')) {
+    if (!defined('Pyncer\IO\ROOT_DIR')) {
         throw new RuntimeException('Pyncer core was not initialized.');
     }
 
-    $dirBase = clean_dir(PYNCER_IO_DIR_ROOT);
+    $dirBase = clean_dir(PYNCER_IO_ROOT_DIR);
 
     if ($dirBase !== '') { // Clean if base directory is set.
         if ($dir === $dirBase) {
@@ -853,8 +853,8 @@ function can_chmod(string $file): bool
 
 function chmod(
     string $file,
-    ?int $fileMode = PYNCER_IO_MODE_FILE,
-    ?int $dirMode = PYNCER_IO_MODE_DIR
+    ?int $fileMode = PYNCER_IO_FILE_MODE,
+    ?int $dirMode = PYNCER_IO_DIR_MODE
 ): void
 {
     if (is_link($file)) {

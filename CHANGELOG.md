@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.1.8 - Unreleased
+
+### Changed
+
+- Normalized naming order of some Pyncer\IO constants.
+
 ## 1.1.7 - 2023-09-17
 
 ### Added
