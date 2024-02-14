@@ -1,6 +1,6 @@
 # Change Log
 
-## 1.1.8 - Unreleased
+## 1.1.8 - 2024-02-14
 
 ### Added
 
