@@ -2,6 +2,10 @@
 
 ## 1.1.8 - Unreleased
 
+### Added
+
+- Added code function.
+
 ### Changed
 
 - Normalized naming order of some Pyncer\IO constants.

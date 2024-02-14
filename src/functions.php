@@ -192,3 +192,18 @@ function uid(): string
         mt_rand(0, 65535)
     );
 }
+
+function code(int $length): string
+{
+    if ($length <= 0) {
+        throw new InvalidArgumentException('Length must be greater than zero.');
+    }
+
+    $code = '';
+
+    for ($i = 0; $i < $length; ++$i) {
+        $code .= random_int(0, 9);
+    }
+
+    return $code;
+}
