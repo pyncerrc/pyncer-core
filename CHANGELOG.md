@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.1.9 - 2024-02-25
+
+### Added
+
+- Added map\_dfines utility function.
+
 ## 1.1.8 - 2024-02-14
 
 ### Added

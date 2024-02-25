@@ -128,3 +128,56 @@ function class_implements(
 
     return false;
 }
+
+/**
+ * Replaces any define references in the specified data with the corresponding defined value.
+ *
+ * @template T
+ *
+ * @param T|array<T> $data The data to map.
+ * @param string $namespace The namespace to prepend to defines with no namespace specified.
+ *
+ * @return null|T|array<null|T> The specified data with define references replaced.
+ */
+function map_defines(mixed $data, string $namespace = ''): mixed
+{
+    if (is_string($data)) {
+        if (str_starts_with($data, '${') &&
+            str_ends_with($data, '}')
+        ) {
+            $data = trim(substr($data, 2, -1));
+
+            if ($data === '') {
+                return null;
+            }
+
+            if (str_contains($data, '__')) {
+                $data = str_replace('__', '\\', $data);
+            } else {
+                $namespace = trim($namespace, '\\');
+
+                if ($namespace !== '') {
+                    $data = $namespace . '\\' . $data;
+                }
+            }
+
+            if (defined($data)) {
+                $data = constant($data);
+            } else {
+                $data = null;
+            }
+        }
+
+        return $data;
+    }
+
+    if (is_array($data)) {
+        foreach ($data as $key => $value) {
+            if (is_string($value) || is_array($value)) {
+                $data[$key] = map_defines($value, $namespace);
+            }
+        }
+    }
+
+    return $data;
+}
