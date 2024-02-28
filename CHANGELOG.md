@@ -1,10 +1,15 @@
 # Change Log
 
+## 1.2.0 - Unreleased
+
+### Changed
+- Deprecated HTTP URL functions and replaced them with equivalent URI functions.
+
 ## 1.1.9 - 2024-02-25
 
 ### Added
 
-- Added map\_dfines utility function.
+- Added map\_defines utility function.
 
 ## 1.1.8 - 2024-02-14
 
