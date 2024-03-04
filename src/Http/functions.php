@@ -462,7 +462,7 @@ function parse_url_query(string $query): array
  */
 function merge_url_queries(string|iterable ...$queries): array
 {
-    return merge_uri_queries($queries);
+    return merge_uri_queries(...$queries);
 }
 
 /**
