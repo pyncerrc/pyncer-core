@@ -5,15 +5,15 @@ use PHPUnit\Framework\TestCase;
 
 class HttpTest extends TestCase
 {
-    public function testCleanUrl(): void
+    public function testCleanUri(): void
     {
         $test = 'https://www.example.com/test/?query=value';
-        $test = \Pyncer\Http\clean_url($test);
+        $test = \Pyncer\Http\clean_uri($test);
         $result = 'https://www.example.com/test?query=value';
         $this->assertEquals($test, $result);
 
         $test = 'https://www.example.com?query=value';
-        $test = \Pyncer\Http\clean_url($test);
+        $test = \Pyncer\Http\clean_uri($test);
         $result = 'https://www.example.com/?query=value';
         $this->assertEquals($test, $result);
     }
@@ -51,9 +51,9 @@ class HttpTest extends TestCase
         $this->assertEquals($test, $result);
     }
 
-    public function testParseUrlQuery(): void
+    public function testParseUriQuery(): void
     {
-        $test = \Pyncer\Http\parse_url_query(
+        $test = \Pyncer\Http\parse_uri_query(
             '?test=1&test=2',
         );
         $result = [
@@ -61,7 +61,7 @@ class HttpTest extends TestCase
         ];
         $this->assertEquals($test, $result);
 
-        $test = \Pyncer\Http\parse_url_query(
+        $test = \Pyncer\Http\parse_uri_query(
             'test[]=1&test[]=2',
         );
         $result = [
@@ -69,7 +69,7 @@ class HttpTest extends TestCase
         ];
         $this->assertEquals($test, $result);
 
-        $test = \Pyncer\Http\parse_url_query(
+        $test = \Pyncer\Http\parse_uri_query(
             'test=1&foo=bar',
         );
         $result = [
@@ -78,7 +78,7 @@ class HttpTest extends TestCase
         ];
         $this->assertEquals($test, $result);
 
-        $test = \Pyncer\Http\parse_url_query(
+        $test = \Pyncer\Http\parse_uri_query(
             'test[foo]=1&test[bar]=2',
         );
         $result = [
@@ -89,7 +89,7 @@ class HttpTest extends TestCase
         ];
         $this->assertEquals($test, $result);
 
-        $test = \Pyncer\Http\parse_url_query(
+        $test = \Pyncer\Http\parse_uri_query(
             'test[][foo]=1&test[][bar]=2',
         );
         $result = [
@@ -101,9 +101,9 @@ class HttpTest extends TestCase
         $this->assertEquals($test, $result);
     }
 
-    public function testMergeUrlQuery(): void
+    public function testMergeUriQuery(): void
     {
-        $test = \Pyncer\Http\merge_url_queries(
+        $test = \Pyncer\Http\merge_uri_queries(
             'test[foo]=1&test[bar]=2',
             'test[foo]=3',
             [
@@ -126,9 +126,9 @@ class HttpTest extends TestCase
         $this->assertEquals($test, $result);
     }
 
-    public function testBuildUrlQuery(): void
+    public function testBuildUriQuery(): void
     {
-        $test = \Pyncer\Http\build_url_query([
+        $test = \Pyncer\Http\build_uri_query([
             'test' => [
                 'foo' => 3,
                 'bar' => 2,
@@ -144,7 +144,7 @@ class HttpTest extends TestCase
         $result = 'test%5Bfoo%5D=3&test%5Bbar%5D=2&test2=yes%20yes&test3=&1=1&2=0&3';
         $this->assertEquals($test, $result);
 
-        $test = \Pyncer\Http\build_url_query([
+        $test = \Pyncer\Http\build_uri_query([
             'test' => [
                 ['foo' => '1'],
                 ['bar' => '2'],
@@ -153,7 +153,7 @@ class HttpTest extends TestCase
         $result = 'test%5B0%5D%5Bfoo%5D=1&test%5B1%5D%5Bbar%5D=2';
         $this->assertEquals($test, $result);
 
-        $test = \Pyncer\Http\build_url_query([
+        $test = \Pyncer\Http\build_uri_query([
             'test' => [
                 ['1', '2'],
             ],
@@ -162,60 +162,60 @@ class HttpTest extends TestCase
         $this->assertEquals($test, $result);
     }
 
-    public function testRelativeUrl(): void
+    public function testRelativeUri(): void
     {
-        $test = \Pyncer\Http\relative_url(
+        $test = \Pyncer\Http\relative_uri(
             'https://pyncer.com/core',
             'https://pyncer.com',
         );
         $result = '/core';
         $this->assertEquals($test, $result);
 
-        $test = \Pyncer\Http\relative_url(
+        $test = \Pyncer\Http\relative_uri(
             'https://pyncer.com/core',
             'https://pyncer.com/',
         );
         $result = '/core';
         $this->assertEquals($test, $result);
 
-        $test = \Pyncer\Http\relative_url(
+        $test = \Pyncer\Http\relative_uri(
             'https://pyncer.com/core',
             'https://pyncer.org',
         );
         $result = 'https://pyncer.com/core';
         $this->assertEquals($test, $result);
 
-        $test = \Pyncer\Http\relative_url(
+        $test = \Pyncer\Http\relative_uri(
             'https://pyncer.com/core',
         );
         $result = '/core';
         $this->assertEquals($test, $result);
     }
 
-    public function testAbsoluteUrl(): void
+    public function testAbsoluteUri(): void
     {
-        $test = \Pyncer\Http\absolute_url(
+        $test = \Pyncer\Http\absolute_uri(
             '/core',
             'https://pyncer.com',
         );
         $result = 'https://pyncer.com/core';
         $this->assertEquals($test, $result);
 
-        $test = \Pyncer\Http\absolute_url(
+        $test = \Pyncer\Http\absolute_uri(
             'core',
             'https://pyncer.com/',
         );
         $result = 'https://pyncer.com/core';
         $this->assertEquals($test, $result);
 
-        $test = \Pyncer\Http\absolute_url(
+        $test = \Pyncer\Http\absolute_uri(
             'core',
             'https://pyncer.com',
         );
         $result = 'https://pyncer.com/core';
         $this->assertEquals($test, $result);
 
-        $test = \Pyncer\Http\absolute_url(
+        $test = \Pyncer\Http\absolute_uri(
             'https://pyncer.com/core',
             'https://pyncer.org',
         );
@@ -223,83 +223,83 @@ class HttpTest extends TestCase
         $this->assertEquals($test, $result);
     }
 
-    public function testUrlEquals(): void
+    public function testUriEquals(): void
     {
-        $test = \Pyncer\Http\url_equals(
+        $test = \Pyncer\Http\uri_equals(
             'https://pyncer.com',
             'https://pyncer.org',
         );
         $this->assertFalse($test);
 
-        $test = \Pyncer\Http\url_equals(
+        $test = \Pyncer\Http\uri_equals(
             'https://pyncer.com/',
             'https://pyncer.com',
         );
         $this->assertTrue($test);
 
-        $test = \Pyncer\Http\url_equals(
+        $test = \Pyncer\Http\uri_equals(
             'https://pyncer.com',
             'https://pyncer.com/',
         );
         $this->assertTrue($test);
 
-        $test = \Pyncer\Http\url_equals(
+        $test = \Pyncer\Http\uri_equals(
             'https://pyncer.com/core?foo=bar&bar=foo',
             'https://pyncer.com/core?bar=foo&foo=bar',
         );
         $this->assertTrue($test);
 
-        $test = \Pyncer\Http\url_equals(
+        $test = \Pyncer\Http\uri_equals(
             'https://pyncer.com/core?foo[bar]=1&foo[baz]=2',
             'https://pyncer.com/core?foo[baz]=2&foo[bar]=1',
         );
         $this->assertTrue($test);
     }
 
-    public function testEncodeUrl(): void
+    public function testEncodeUri(): void
     {
-        $test = \Pyncer\Http\encode_url(
+        $test = \Pyncer\Http\encode_uri(
             'this is a test',
         );
         $result = 'this%20is%20a%20test';
 
         $this->assertEquals($test, $result);
-        $test = \Pyncer\Http\encode_url(
+        $test = \Pyncer\Http\encode_uri(
             'this is a test',
             PHP_QUERY_RFC3986,
         );
         $result = 'this%20is%20a%20test';
         $this->assertEquals($test, $result);
 
-        $test = \Pyncer\Http\encode_url(
+        $test = \Pyncer\Http\encode_uri(
             'this is a test',
             PHP_QUERY_RFC1738,
         );
         $result = 'this+is+a+test';
     }
 
-    public function testDecodeUrl(): void
+    public function testDecodeUri(): void
     {
-        $test = \Pyncer\Http\decode_url(
+        $test = \Pyncer\Http\decode_uri(
             'this%20is%20a%20test',
         );
         $result = 'this is a test';
 
-        $test = \Pyncer\Http\decode_url(
+        $test = \Pyncer\Http\decode_uri(
             'this%20is%20a%20test',
             PHP_QUERY_RFC3986,
         );
         $result = 'this is a test';
         $this->assertEquals($test, $result);
 
-        $test = \Pyncer\Http\decode_url(
+        $test = \Pyncer\Http\decode_uri(
             'this+is+a+test',
             PHP_QUERY_RFC1738,
         );
         $result = 'this is a test';
         $this->assertEquals($test, $result);
 
-        $test = \Pyncer\Http\decode_url(
+        $test = \Pyncer\Http\decode_uri(
             'this+is+a+test',
             PHP_QUERY_RFC3986,
         );
@@ -307,9 +307,9 @@ class HttpTest extends TestCase
         $this->assertEquals($test, $result);
     }
 
-    public function testEncodeUrlPath(): void
+    public function testEncodeUriPath(): void
     {
-        $test = \Pyncer\Http\encode_url_path(
+        $test = \Pyncer\Http\encode_uri_path(
             '/test <wow>/#^/',
             PHP_QUERY_RFC3986,
         );
@@ -317,9 +317,9 @@ class HttpTest extends TestCase
         $this->assertEquals($test, $result);
     }
 
-    public function testEncodeUrlUserInfo(): void
+    public function testEncodeUriUserInfo(): void
     {
-        $test = \Pyncer\Http\encode_url_path(
+        $test = \Pyncer\Http\encode_uri_path(
             'user<name>:pass!@#$%^&*()[]<>',
             PHP_QUERY_RFC3986,
         );
@@ -327,9 +327,9 @@ class HttpTest extends TestCase
         $this->assertEquals($test, $result);
     }
 
-    public function testEncodeUrlQuery(): void
+    public function testEncodeUriQuery(): void
     {
-        $test = \Pyncer\Http\encode_url_path(
+        $test = \Pyncer\Http\encode_uri_path(
             '?!@#$%=^&*()[]<>&,.=bar',
             PHP_QUERY_RFC3986,
         );
@@ -337,9 +337,9 @@ class HttpTest extends TestCase
         $this->assertEquals($test, $result);
     }
 
-    public function testEncodeUrlFragment(): void
+    public function testEncodeUriFragment(): void
     {
-        $test = \Pyncer\Http\encode_url_path(
+        $test = \Pyncer\Http\encode_uri_path(
             '#!@#$%=^&*()[]<>&,.=bar',
             PHP_QUERY_RFC3986,
         );
