@@ -169,16 +169,18 @@ function filenames(
     return $files;
 }
 
-function filename(string $file): ?string
+function filename(string $file, bool $removeExtension = false): ?string
 {
     $pos = strrpos($file, DS);
     if ($pos !== false) {
         $file = substr($file, $pos + strlen(DS));
     }
 
-    $pos = strrpos($file, '.');
-    if ($pos !== false) {
-        $file = substr($file, 0, $pos);
+    if ($removeExtension) {
+        $pos = strrpos($file, '.');
+        if ($pos !== false) {
+            $file = substr($file, 0, $pos);
+        }
     }
 
     return ($file !== '' ? $file : null);
@@ -189,7 +191,9 @@ function extension(string $file): ?string
     $pos = strrpos($file, '.');
 
     if ($pos !== false) {
-        return substr($file, $pos + 1);
+        $extension = substr($file, $pos + 1);
+
+        return ($extension !== '' ? $extension : null);
     }
 
     return null;
