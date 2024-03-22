@@ -1,8 +1,13 @@
 # Change Log
 
-## 1.2.0 - Unreleased
+## 1.2.0 - 2024-03-22
+
+### Added
+
+- Added removeExtension parameter to filename IO function.
 
 ### Changed
+
 - Deprecated HTTP URL functions and replaced them with equivalent URI functions.
 
 ## 1.1.9 - 2024-02-25
