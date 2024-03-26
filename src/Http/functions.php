@@ -49,8 +49,8 @@ function clean_uri(string $uri): string
 
     $parts[0] = clean_path($parts[0]);
 
-    // Ensure trailing / if no path
-    if (substr_count($parts[0], '/') === 2) {
+    // Ensure trailing / if no path and a query
+    if (($parts[1] ?? null) !== null && substr_count($parts[0], '/') === 2) {
         $parts[0] .= '/';
     }
 
