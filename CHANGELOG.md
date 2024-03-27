@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.2.1 - 2024-03-27
+
+### Fixed
+
+- Fixed clean\_uri function adding a trailing '/' when not needed.
+
 ## 1.2.0 - 2024-03-22
 
 ### Added
