@@ -601,14 +601,23 @@ function has_compositions(array $array): bool
  *
  * @param array<int|string, mixed> $array The array to get the first key from.
  * @return null|int|string The first key in the array.
+ * @deprecated Use array_key_first.
  */
 function first_key(array $array): null|int|string
 {
-    if (!$array) {
-        return null;
-    }
+    return array_key_first($array);
+}
 
-    return array_keys($array)[0];
+/**
+ * Gets the last key in the array.
+ *
+ * @param array<int|string, mixed> $array The array to get the last key from.
+ * @return null|int|string The last key in the array.
+ * @deprecated Use array_key_last.
+ */
+function last_key(array $array): null|int|string
+{
+    return array_key_last($array);
 }
 
 /**
@@ -620,27 +629,7 @@ function first_key(array $array): null|int|string
  */
 function first_value(array $array): mixed
 {
-    if (!$array) {
-        return null;
-    }
-
     return array_shift($array);
-}
-
-/**
- * Gets the last key in the array.
- *
- * @param array<int|string, mixed> $array The array to get the last key from.
- * @return null|int|string The last key in the array.
- */
-function last_key(array $array): null|int|string
-{
-    if (!$array) {
-        return null;
-    }
-
-    $keys = array_keys($array);
-    return $keys[count($keys) - 1];
 }
 
 /**
@@ -652,10 +641,6 @@ function last_key(array $array): null|int|string
  */
 function last_value(array $array): mixed
 {
-    if (!$array) {
-        return null;
-    }
-
     return array_pop($array);
 }
 
@@ -854,7 +839,7 @@ function implode(string $separator, array $array, ?int $count = null): string
  *      previous key in the array.
  * @return mixed The value.
  */
-function get_recursive($array, array $keys): mixed
+function get_recursive(array $array, array $keys): mixed
 {
     $keys = array_reverse($keys);
 

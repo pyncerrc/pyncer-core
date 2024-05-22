@@ -1,5 +1,15 @@
 # Change Log
 
+## 1.2.2 - 2024-05-21
+
+### Fixed
+
+- Added missing type hint to get\_recursive $array parameter.
+
+### Changed
+
+- Deprecated first\_key and last\_key array functions since array\_key\_first and array\_key\_last now exist.
+
 ## 1.2.1 - 2024-03-27
 
 ### Fixed
