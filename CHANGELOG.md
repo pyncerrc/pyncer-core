@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.2.3 - 2024-09-28
+
+### Fixed
+
+- Fixed not taking into consideration paths with periods when dealing with extensions.
+
 ## 1.2.2 - 2024-05-21
 
 ### Fixed

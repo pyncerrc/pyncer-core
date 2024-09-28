@@ -77,6 +77,12 @@ class IOTest extends TestCase
     public function testFilename(): void
     {
         $filename = \Pyncer\IO\filename($this->dir . DS . 'empty.txt');
+        $this->assertEquals($filename, 'empty.txt');
+
+        $filename = \Pyncer\IO\filename($this->dir . DS . 'empty.txt', true);
+        $this->assertEquals($filename, 'empty');
+
+        $filename = \Pyncer\IO\filename($this->dir . DS . 'test.periods.in.path' . DS . 'empty', true);
         $this->assertEquals($filename, 'empty');
     }
 
@@ -87,12 +93,18 @@ class IOTest extends TestCase
 
         $extension = \Pyncer\IO\extension($this->dir . DS . 'empty');
         $this->assertEquals($extension, null);
+
+        $extension = \Pyncer\IO\extension($this->dir . DS . 'test.periods.in.path' . DS . 'empty');
+        $this->assertEquals($extension, null);
     }
 
     public function testReplaceExtension(): void
     {
         $filename = \Pyncer\IO\replace_extension('file.txt', 'csv');
         $this->assertEquals($filename, 'file.csv');
+
+        $filename = \Pyncer\IO\replace_extension(DS . 'test.periods.in.path' . DS . 'empty', 'txt');
+        $this->assertEquals($filename, DS . 'test.periods.in.path' . DS . 'empty.txt');
     }
 
     public function testFilesizeFromString(): void

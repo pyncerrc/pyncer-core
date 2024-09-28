@@ -177,9 +177,10 @@ function filename(string $file, bool $removeExtension = false): ?string
     }
 
     if ($removeExtension) {
-        $pos = strrpos($file, '.');
-        if ($pos !== false) {
-            $file = substr($file, 0, $pos);
+        $extension = extension($file);
+
+        if ($extension !== null) {
+            $file = substr($file, 0, -(strlen($extension) + 1));
         }
     }
 
@@ -193,6 +194,15 @@ function extension(string $file): ?string
     if ($pos !== false) {
         $extension = substr($file, $pos + 1);
 
+        if (DS !== '/') {
+            $extension = str_replace('/', DS, $extension);
+        }
+
+        // If there is a path separator, than there is no extension
+        if (str_contains($extension, DS)) {
+            return null;
+        }
+
         return ($extension !== '' ? $extension : null);
     }
 
@@ -201,9 +211,9 @@ function extension(string $file): ?string
 
 function replace_extension(string $file, ?string $extension = null): string
 {
-    $pos = strrpos($file, '.');
-    if ($pos !== false) {
-        $file = substr($file, 0, $pos);
+    $currentExtension = extension($file);
+    if ($currentExtension !== null) {
+        $file = substr($file, 0, -(strlen($currentExtension) + 1));
     }
 
     if ($extension !== null) {
