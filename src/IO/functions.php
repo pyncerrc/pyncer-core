@@ -198,7 +198,7 @@ function extension(string $file): ?string
             $extension = str_replace('/', DS, $extension);
         }
 
-        // If there is a path separator, than there is no extension
+        // If there is a path separator, then there is no extension
         if (str_contains($extension, DS)) {
             return null;
         }
