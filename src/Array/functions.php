@@ -702,7 +702,7 @@ function sub_values(
 function group_values(
     array $array,
     int|string $groupKey,
-    int|string $defaultKey = null
+    null|int|string $defaultKey = null
 ): array
 {
     $newa = [];
