@@ -1,10 +1,11 @@
 # Change Log
 
-## 1.2.4 - Unreleased
+## 1.2.4 - 2025-08-08
 
 ### Fixed
 
 - Fixed deprecated implicitly marked nullable parameter.
+- Fixed errors brought up by updated PHPStan.
 
 ## 1.2.3 - 2024-09-28
 

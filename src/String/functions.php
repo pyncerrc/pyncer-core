@@ -401,6 +401,11 @@ function ucfirst(string $string): string
             return to_upper($string);
         default:
             preg_match('/^(.{1})(.*)$/us', $string, $matches);
+
+            if (!isset($matches[1], $matches[2])) {
+                return $string;
+            }
+
             return to_upper($matches[1]) . $matches[2];
     }
 }

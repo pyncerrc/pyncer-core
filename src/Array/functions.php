@@ -2,6 +2,8 @@
 namespace Pyncer\Array;
 
 use Pyncer\Exception\InvalidArgumentException;
+use Stringable;
+use Traversable;
 
 use function array_diff;
 use function array_intersect;
@@ -31,7 +33,6 @@ use function Pyncer\String\sub as pyncer_str_sub;
 use function rsort;
 use function strlen;
 use function substr;
-use Traversable;
 
 /**
  * Returns $defaultValue if $array is null or empty.
@@ -265,7 +266,7 @@ function merge_diff(array ...$arrays): array
  *
  * @param string $separator
  * @param iterable<int|string, mixed> ...$arrays
- * @return array<int|string, mixed> The resulting new array.
+ * @return array<int|string, string> The resulting new array.
  */
 function merge_implode(string $separator, iterable ...$arrays): array
 {
@@ -273,8 +274,18 @@ function merge_implode(string $separator, iterable ...$arrays): array
 
     foreach ($arrays as $array) {
         foreach ($array as $key => $value) {
+            if (!is_scalar($value) && !$value instanceof Stringable) {
+                continue;
+            }
+
+            $value = strval($value);
+
             if (array_key_exists($key, $newa)) {
-                $newa[$key] .= $separator . strval($value);
+                if ($value === '') {
+                    continue;
+                }
+
+                $newa[$key] .= $separator . $value;
             } else {
                 $newa[$key] = $value;
             }
@@ -455,8 +466,14 @@ function data_implode(string $separator, iterable $array): string
         $array = iterator_to_array($array, false);
     }
 
-    $array = array_map(strval(...), $array);
-    $array = array_map(trim(...), $array);
+    foreach ($array as $key => $value) {
+        if (!is_scalar($value) && !$value instanceof Stringable) {
+            $array[$key] = null;
+        } else {
+            $array[$key] = trim(strval($value));
+        }
+    }
+
     $array = unset_empty($array);
     $array = php_implode($separator, $array);
 
@@ -748,8 +765,9 @@ function explode(
 
     $exploded = [];
 
+    /** @var array<string> **/
     $separators = ensure_array($separators, [null, '', false]);
-    $separators = array_map('strval', $separators);
+    $separators = array_map(strval(...), $separators);
     $separators = array_unique($separators);
 
     if (!$separators) {
@@ -967,8 +985,9 @@ function filter(array $array, mixed $filters, string $separator = '_'): array
 {
     $newa = [];
 
+    /** @var array<string> **/
     $filters = ensure_array($filters, [null, '', false]);
-    $filters = array_map('strval', $filters);
+    $filters = array_map(strval(...), $filters);
     $filters = array_unique($filters);
 
     foreach ($array as $key => $value) {
@@ -1006,8 +1025,9 @@ function filter_out_from_key(
 {
     $newa = [];
 
+    /** @var array<string> **/
     $filters = ensure_array($filters, [null, '', false]);
-    $filters = array_map('strval', $filters);
+    $filters = array_map(strval(...), $filters);
     $filters = array_unique($filters);
 
     foreach ($array as $key => $value) {
@@ -1045,8 +1065,9 @@ function filter_into_sub_key(
 {
     $newa = [];
 
+    /** @var array<string> **/
     $filters = ensure_array($filters, [null, '', false]);
-    $filters = array_map('strval', $filters);
+    $filters = array_map(strval(...), $filters);
     $filters = array_unique($filters);
 
     foreach ($array as $key => $value) {
