@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.3.0 - Unreleased
+
+### Added
+
+- Added Initializer class to allow pyncer packages to initialize constants.
+
 ## 1.2.4 - 2025-08-08
 
 ### Fixed

@@ -5,6 +5,7 @@ use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
 use Pyncer\Exception\InvalidArgumentException;
+use Pyncer\Initializer;
 use Stringable;
 
 use function com_create_guid;
@@ -29,13 +30,12 @@ use const Pyncer\DATE_TIME_FORMAT as PYNCER_DATE_TIME_FORMAT;
 use const Pyncer\ENCODING as PYNCER_ENCODING;
 use const Pyncer\NOW as PYNCER_NOW;
 
+/**
+ * @deprecated Call initializer directly.
+ */
 function initialize(): void
 {
-    require_once __DIR__ . DIRECTORY_SEPARATOR . 'initialize.php';
-
-    mb_internal_encoding(PYNCER_ENCODING);
-    mb_http_output(PYNCER_ENCODING);
-    mb_regex_encoding(PYNCER_ENCODING);
+    Initializer::initialize();
 }
 
 /**
