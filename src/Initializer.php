@@ -3,6 +3,8 @@ namespace Pyncer;
 
 use Pyncer\Exception\FileNotFoundException;
 
+use const Pyncer\ENCODING as PYNCER_ENCODING;
+
 class Initializer
 {
     protected static array $files = [];
